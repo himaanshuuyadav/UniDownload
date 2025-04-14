@@ -2,7 +2,7 @@
 
 A modern, user-friendly YouTube video downloader with a sleek interface and powerful features. Download videos in various qualities with just a few clicks.
 
-![UniDownlaod](screenshots/preview.png)
+![UniDownlaod](frontend/preview.png)
 
 ## Features
 
