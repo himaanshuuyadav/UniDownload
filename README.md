@@ -18,8 +18,8 @@ A modern, user-friendly YouTube video downloader with a sleek interface and powe
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/pramanshav-downloader.git
-cd pramanshav-downloader
+git clone https://github.com/himaanshuuyadav/UniDownload.git
+cd UniDownload
 ```
 
 2. Install the required dependencies:
@@ -53,7 +53,7 @@ python app.py
 ## Project Structure
 
 ```
-pramanshav-downloader/
+UniDownload/
 ├── backend/
 │   ├── app.py
 │   └── youtube_downloader.py
@@ -70,6 +70,7 @@ pramanshav-downloader/
 - Flask==3.0.0
 - flask-cors==4.0.0
 - yt-dlp==2024.3.10
+- gunicorn==21.2.0
 
 ## Contributing
 
@@ -81,7 +82,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-- **Pramanshav** - [GitHub Profile](https://github.com/yourusername)
+- **himaanshuuyadav** - [GitHub Profile](https://github.com/himaanshuuyadav)
 
 ## Acknowledgments
 
@@ -91,4 +92,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any issues or have questions, please [open an issue](https://github.com/yourusername/pramanshav-downloader/issues).
+If you encounter any issues or have questions, please [open an issue](https://github.com/himaanshuuyadav/UniDownload/issues).
