@@ -19,7 +19,7 @@ if app.debug:
     CORS(app)
 else:
     CORS(app, resources={r"/*": {"origins": [
-        "https://your-frontend.netlify.app",  # Replace with your actual frontend URL
+        "https://unidownload.onrender.com",  # Replace with your actual frontend URL
     ]}})
 
 DOWNLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "downloads")
