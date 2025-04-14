@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniDownlaod</title>
+    <meta name="description" content="UniDownlaod helps you download YouTube videos in HD, MP4, and other formats quickly and easily. No signup required.">
+    <meta name="keywords" content="YouTube video downloader, download YouTube videos, UniDownlaod, HD YouTube download, free video downloader, yt video downloader, mp4 downloader, online video downloader">
+    <meta name="author" content="Pramanshav">
+    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+    <!-- -----------------------------------------------nav bar----------------------------------------------- -->
+    <nav class="navbar">
+        <div class="logo">UniDownlaod</div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li active><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="how-to-use.html"><i class="fas fa-book"></i> How to Use</a></li>
+            <li><a href="about.html"><i class="fas fa-user"></i> About Me</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- -----------------------------------------------main body----------------------------------------------- -->
+    <main>
+        <div class="main-container">
+            <h1>Welcome to UniDownlaod</h1>
+            <p>Your one-stop solution for downloading videos from various platforms.</p>
+            <div class="url-container">
+                <input type="text" id="video-url" placeholder="Enter YouTube URL">
+                <button id="fetch-qualities"><i class="fa-solid fa-arrow-right"></i></button>
+
+                <!-- Add this loading bar container -->
+                <div class="loading-container" style="display: none;">
+                    <div class="loading-bar">
+                        <div class="loading-progress"></div>
+                    </div>
+                    <p class="loading-text">Fetching video information...</p>
+                </div>
+
+                <div id="qualities">
+                    <div class="qualities-container">
+                        <div id="video-info" style="display: none;">
+                            <img id="video-thumbnail" style="max-width: 320px; border-radius: 10px;">
+                            <h3 id="video-title"></h3>
+                        </div>
+                        <div class="download-controls">
+                            <div class="custom-select">
+                                <div class="select-selected" id="selected-quality">Select Quality</div>
+                                <div class="select-items" id="quality-options"></div>
+                            </div>
+                            <button id="download-btn" style="display: none;">Download</button>
+                        </div>
+                    </div>
+                </div>
+                <p id="response-message"></p>
+            </div>
+
+            
+        </div>
+        <div class="features">
+            <h2>Features</h2>
+            <ul>
+                <li><i class="fa-solid fa-download"></i> Fast and Easy Downloads</li>
+                <li><i class="fa-solid fa-globe"></i> Supports Multiple Platforms</li>
+                <li><i class="fa-solid fa-film"></i> High-Quality Video Downloads</li>
+                <li><i class="fa-solid fa-laptop"></i> User-Friendly Interface</li>
+
+            </ul>
+        </div>
+    </main>
+
+    <script src="./style/script.js"></script>
+    <script src="./style/common.js"></script>
+</body>
+
+</html>
