@@ -28,7 +28,7 @@ def get_ydl_opts(format_id=None):
         'merge_output_format': 'mp4',
         'quiet': False,
         'verbose': True,
-        'proxy': 'http://51.158.68.68:8811',
+        'proxy': 'http://165.225.112.178:10605',
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
         },
