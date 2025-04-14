@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import yt_dlp
 import os
-import time
+import random
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="/")
 
@@ -21,14 +21,25 @@ CORS(app, resources={r"/*": {"origins": ["https://unidownload.onrender.com"]}})
 DOWNLOAD_FOLDER = "/tmp"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-# Shared yt-dlp options
+# Proxy pool (rotate between working proxies)
+PROXIES = [
+    'http://103.231.218.30:80',       # Bangladesh
+    'http://51.77.73.150:3128',       # France
+    'http://103.105.49.53:80',        # Vietnam
+    'http://45.167.125.61:9992',      # Brazil
+]
+
+# Shared yt-dlp options with rotating proxy
 def get_ydl_opts(format_id=None):
+    proxy = random.choice(PROXIES)
+    print("🔁 Using proxy:", proxy)
+
     opts = {
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
         'merge_output_format': 'mp4',
         'quiet': False,
         'verbose': True,
-        'proxy': 'http://165.225.112.178:10605',
+        'proxy': proxy,
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
         },
@@ -40,6 +51,7 @@ def get_ydl_opts(format_id=None):
         'file_access_retries': 10,
         'concurrent_fragment_downloads': 1
     }
+
     if format_id:
         opts['format'] = f"{format_id}+bestaudio[ext=m4a]"
     return opts
