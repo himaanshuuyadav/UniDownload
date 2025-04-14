@@ -21,7 +21,7 @@ CORS(app, resources={r"/*": {"origins": ["https://unidownload.onrender.com"]}})
 DOWNLOAD_FOLDER = "/tmp"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-# Proxy pool (rotate between working proxies)
+# List of proxies to rotate
 PROXIES = [
     'http://103.231.218.30:80',       # Bangladesh
     'http://51.77.73.150:3128',       # France
@@ -29,28 +29,55 @@ PROXIES = [
     'http://45.167.125.61:9992',      # Brazil
 ]
 
-# Shared yt-dlp options with rotating proxy
+# Proxy-aware yt-dlp config
 def get_ydl_opts(format_id=None):
-    proxy = random.choice(PROXIES)
-    print("🔁 Using proxy:", proxy)
+    for attempt, proxy in enumerate(PROXIES, start=1):
+        print(f"🔁 Trying proxy {attempt}/{len(PROXIES)}: {proxy}")
+        opts = {
+            'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
+            'merge_output_format': 'mp4',
+            'quiet': False,
+            'verbose': True,
+            'proxy': proxy,
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            },
+            'extractor_args': {
+                'youtube': ['player_client=web']
+            },
+            'retries': 3,
+            'fragment_retries': 2,
+            'file_access_retries': 2,
+            'concurrent_fragment_downloads': 1
+        }
 
-    opts = {
-        'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
-        'merge_output_format': 'mp4',
-        'quiet': False,
-        'verbose': True,
-        'proxy': proxy,
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        },
-        'extractor_args': {
-            'youtube': ['player_client=web']
-        },
-        'retries': 10,
-        'fragment_retries': 10,
-        'file_access_retries': 10,
-        'concurrent_fragment_downloads': 1
-    }
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                # Dry run with public test video
+                ydl.extract_info("https://www.youtube.com/watch?v=BaW_jenozKc", download=False)
+            print("✅ Proxy works:", proxy)
+            break  # Use this proxy
+        except Exception as e:
+            print(f"❌ Proxy failed: {proxy} — {e}")
+            continue
+    else:
+        print("🛑 All proxies failed. Using no proxy (direct mode).")
+        opts = {
+            'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
+            'merge_output_format': 'mp4',
+            'quiet': False,
+            'verbose': True,
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            },
+            'extractor_args': {
+                'youtube': ['player_client=web']
+            },
+            'retries': 3,
+            'fragment_retries': 2,
+            'file_access_retries': 2,
+            'concurrent_fragment_downloads': 1
+        }
 
     if format_id:
         opts['format'] = f"{format_id}+bestaudio[ext=m4a]"
