@@ -31,7 +31,13 @@ def get_youtube_qualities(url):
     try:
         ydl_opts = {"quiet": True}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(url, download=False)
+            try:
+                info_dict = ydl.extract_info(url, download=False)
+            except yt_dlp.utils.DownloadError as e:
+                if "Video unavailable" in str(e):
+                    return {"error": "This video is unavailable. It might be private, deleted, or region-restricted."}
+                return {"error": str(e)}
+            
             formats = info_dict.get("formats", [])
 
         # Get video metadata
@@ -56,7 +62,7 @@ def get_youtube_qualities(url):
         return {"qualities": qualities, "video_info": video_info}
 
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": f"Error: {str(e)}"}
 
 
 @app.route("/get_qualities", methods=["POST"])
@@ -103,12 +109,18 @@ def download_video():
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([video_url])
+            try:
+                ydl.download([video_url])
+            except yt_dlp.utils.DownloadError as e:
+                if "Video unavailable" in str(e):
+                    return jsonify({"error": "This video is unavailable. It might be private, deleted, or region-restricted."}), 400
+                return jsonify({"error": str(e)}), 400
 
         return jsonify({"success": "Download completed successfully!"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 
