@@ -66,6 +66,11 @@ function fetchQualities() {
     .then(data => {
         loadingContainer.style.display = "none";
         
+        if (data.error) {
+            showMessage(data.error, true);
+            return;
+        }
+
         let downloadBtn = document.getElementById("download-btn");
         let videoInfo = document.getElementById("video-info");
         let videoThumbnail = document.getElementById("video-thumbnail");
@@ -77,11 +82,6 @@ function fetchQualities() {
         selectedQuality.textContent = "Select Quality";
         selectedQuality.removeAttribute('data-value');
         downloadBtn.style.display = "none";
-
-        if (data.error) {
-            showMessage(`Error: ${data.error}`, true);
-            return;
-        }
 
         if (data.video_info) {
             videoThumbnail.src = data.video_info.thumbnail || '';
