@@ -3,7 +3,18 @@ from flask_cors import CORS
 import yt_dlp
 import os
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder="../frontend", static_url_path="/")
+from flask import send_from_directory
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def serve_static_files(path):
+    return send_from_directory(app.static_folder, path)
+
 if app.debug:
     CORS(app)
 else:
