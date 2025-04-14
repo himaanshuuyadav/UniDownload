@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: unidownload
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: python app.py
+    runtime: python
+    region: oregon
+    branch: main
+    repo: https://github.com/himaanshuuyadav/UniDownload
