@@ -86,6 +86,8 @@ def get_ydl_opts(format_id=None):
 # Fetch qualities
 @app.route("/get_qualities", methods=["POST"])
 def get_qualities():
+    print("Starting get_qualities() call for URL:", video_url)
+
     data = request.get_json()
     video_url = data.get("url")
     if not video_url:
