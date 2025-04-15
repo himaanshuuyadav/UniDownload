@@ -58,11 +58,17 @@ function fetchQualities() {
     qualitiesDiv.style.display = "none";
 
     fetch(`${API_BASE_URL}/get_qualities`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: videoUrl })
-    })
-    .then(response => response.json())
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: videoUrl })
+})
+.then(async response => {
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Server responded with status ${response.status}: ${text}`);
+    }
+    return response.json();
+})
     .then(data => {
         loadingContainer.style.display = "none";
         
@@ -117,11 +123,9 @@ function fetchQualities() {
         }
     })
     .catch(error => {
-        loadingContainer.style.display = "none";
-        console.error("Error fetching qualities:", error);
-        showMessage("Error fetching video information. Please try again.", true);
-        qualitiesDiv.style.display = "none";
-    });
+    console.error("Error fetching qualities:", error);
+    showMessage("Error fetching video info. Please try again.", true);
+});
 }
 
 function downloadVideo() {
