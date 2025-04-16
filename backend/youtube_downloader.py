@@ -67,7 +67,7 @@ def get_video_qualities_api(url):
                 # Filter for MP4 video formats
                 best_qualities = {}
                 for fmt in formats:
-                    if fmt.get("vcodec") != "none" and fmt.get("acodec") == "none" and fmt.get("ext") == "mp4":
+                    if fmt.get("vcodec") != "none" and fmt.get("ext") in ["mp4", "webm"]:
                         resolution = f"{fmt.get('height', 'Unknown')}p"
                         if resolution not in best_qualities or fmt.get("tbr", 0) > best_qualities[resolution]["tbr"]:
                             best_qualities[resolution] = {
