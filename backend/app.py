@@ -7,14 +7,16 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder="../frontend", static_url_path="/")
 CORS(app)
 
-@app.route("/")
-def serve_index():
-    return send_from_directory(app.static_folder, "index.html")
+# Create a directory for cookies
+COOKIE_DIR = "/tmp/cookies"
+os.makedirs(COOKIE_DIR, exist_ok=True)
+COOKIE_FILE = os.path.join(COOKIE_DIR, "youtube.cookies")
 
-@app.route("/<path:path>")
-def serve_static_files(path):
-    return send_from_directory(app.static_folder, path)
-# Add this function to your app.py to initialize a cookie file
+# Safe download folder for Render
+DOWNLOAD_FOLDER = "/tmp"
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
+# Add this function to initialize a cookie file
 def init_cookie_file():
     # Create a basic cookie structure if file doesn't exist
     if not os.path.exists(COOKIE_FILE):
@@ -32,14 +34,6 @@ def init_cookie_file():
 
 # Call this at the start of your application
 init_cookie_file()
-# Create a directory for cookies
-COOKIE_DIR = "/tmp/cookies"
-os.makedirs(COOKIE_DIR, exist_ok=True)
-COOKIE_FILE = os.path.join(COOKIE_DIR, "youtube.cookies")
-
-# Safe download folder for Render
-DOWNLOAD_FOLDER = "/tmp"
-os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 # List of proxies to rotate
 PROXIES = [
@@ -82,6 +76,14 @@ def get_ydl_opts(format_id=None):
         opts['format'] = f"{format_id}+bestaudio[ext=m4a]"
     
     return opts
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def serve_static_files(path):
+    return send_from_directory(app.static_folder, path)
 
 # Fetch qualities
 @app.route("/get_qualities", methods=["POST"])
@@ -138,6 +140,7 @@ def get_qualities():
     except Exception as e:
         print("General error during get_qualities:", e)
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
 # Handle downloads
 @app.route("/download", methods=["POST"])
 def download_video():
