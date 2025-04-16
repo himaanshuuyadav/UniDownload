@@ -1,8 +1,11 @@
 import yt_dlp
-import os
 import requests
 import json
 import re
+import os
+
+COOKIE_FILE = os.path.join(os.path.dirname(__file__), "cookies", "youtube.cookies")
+
 
 # Add your API key here after getting it from Google Developer Console
 API_KEY = "AIzaSyBMEqA2fgrjz3C4W3LSDkww1bhxybh12Mc"
@@ -50,6 +53,7 @@ def get_video_qualities_api(url):
             'quiet': True,
             'no_warnings': True,
             'skip_download': True,
+            'cookiefile': COOKIE_FILE,
             'youtube_include_dash_manifest': False,
             'writeinfojson': True,
             'outtmpl': '/tmp/%(id)s.info.json'
