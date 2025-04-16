@@ -1,10 +1,11 @@
+import os
+import json
+import yt_dlp
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import yt_dlp
-import os
-import random
 
 app = Flask(__name__, static_folder="../frontend", static_url_path="/")
+CORS(app)
 
 @app.route("/")
 def serve_index():
@@ -13,9 +14,28 @@ def serve_index():
 @app.route("/<path:path>")
 def serve_static_files(path):
     return send_from_directory(app.static_folder, path)
+# Add this function to your app.py to initialize a cookie file
+def init_cookie_file():
+    # Create a basic cookie structure if file doesn't exist
+    if not os.path.exists(COOKIE_FILE):
+        with open(COOKIE_FILE, 'w') as f:
+            cookies = [
+                {
+                    "name": "CONSENT",
+                    "value": "YES+cb",
+                    "domain": ".youtube.com",
+                    "path": "/",
+                    "secure": True
+                }
+            ]
+            json.dump(cookies, f)
 
-# CORS setup
-CORS(app, resources={r"/*": {"origins": "*"}})
+# Call this at the start of your application
+init_cookie_file()
+# Create a directory for cookies
+COOKIE_DIR = "/tmp/cookies"
+os.makedirs(COOKIE_DIR, exist_ok=True)
+COOKIE_FILE = os.path.join(COOKIE_DIR, "youtube.cookies")
 
 # Safe download folder for Render
 DOWNLOAD_FOLDER = "/tmp"
@@ -32,26 +52,32 @@ PROXIES = [
 # Proxy-aware yt-dlp config
 # Updated proxy handling
 def get_ydl_opts(format_id=None):
-    # Try direct connection first without proxy
     opts = {
-        'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
+        'outtmpl': os.path.join("/tmp", '%(title)s_%(id)s.%(ext)s'),
         'merge_output_format': 'mp4',
         'quiet': False,
         'verbose': True,
+        'cookiefile': COOKIE_FILE,  # Use cookies to avoid bot detection
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Referer': 'https://www.youtube.com/',
         },
         'extractor_args': {
-            'youtube': ['player_client=web']
+            'youtube': {
+                'player_client': ['web', 'android'],
+                'player_skip': ['configs', 'webpage']
+            }
         },
-        'retries': 5,  # Increased retries
-        'fragment_retries': 3,
-        'file_access_retries': 3,
-        'socket_timeout': 30,  # Added timeout
+        'retries': 5,
+        'fragment_retries': 5,
+        'file_access_retries': 5,
+        'socket_timeout': 30,
         'concurrent_fragment_downloads': 1
     }
 
-    # Add format if provided
     if format_id:
         opts['format'] = f"{format_id}+bestaudio[ext=m4a]"
     
@@ -67,16 +93,21 @@ def get_qualities():
         return jsonify({"error": "No URL provided"}), 400
     
     print("Starting get_qualities() call for URL:", video_url)
-
+    
     try:
         with yt_dlp.YoutubeDL(get_ydl_opts()) as ydl:
             info = ydl.extract_info(video_url, download=False)
+            
+            if not info:
+                return jsonify({"error": "Could not extract video information"}), 400
+                
             formats = info.get("formats", [])
             video_info = {
                 "title": info.get("title", "Unknown"),
                 "thumbnail": info.get("thumbnail", ""),
             }
-
+            
+            # Filter for MP4 video formats
             best_qualities = {}
             for fmt in formats:
                 if fmt.get("vcodec") != "none" and fmt.get("acodec") == "none" and fmt.get("ext") == "mp4":
@@ -88,16 +119,25 @@ def get_qualities():
                             "ext": fmt["ext"],
                             "tbr": fmt.get("tbr", 0)
                         }
-
+            
             qualities = sorted(best_qualities.values(), key=lambda x: int(x["resolution"].replace("p", "")), reverse=True)
+            
+            if not qualities:
+                return jsonify({"error": "No downloadable formats found for this video"}), 400
+                
             return jsonify({"qualities": qualities, "video_info": video_info})
     except yt_dlp.utils.DownloadError as e:
         print("yt-dlp error during info fetch:", e)
-        return jsonify({"error": "This video might be private, region-restricted, or blocked."}), 400
+        error_msg = str(e)
+        if "Sign in to confirm you're not a bot" in error_msg:
+            return jsonify({"error": "YouTube detected automation. Try again later or with a different video."}), 400
+        elif "private" in error_msg.lower():
+            return jsonify({"error": "This video is private or unavailable."}), 400
+        else:
+            return jsonify({"error": "Unable to fetch video information. YouTube may be restricting access."}), 400
     except Exception as e:
         print("General error during get_qualities:", e)
-        return jsonify({"error": str(e)}), 500
-
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 # Handle downloads
 @app.route("/download", methods=["POST"])
 def download_video():
