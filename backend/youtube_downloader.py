@@ -4,7 +4,7 @@ import json
 import re
 import os
 
-COOKIE_FILE = os.path.join(os.path.dirname(__file__), "cookies", "youtube.cookies")
+COOKIE_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "cookies", "youtube.cookies"))
 
 
 # Add your API key here after getting it from Google Developer Console
@@ -67,7 +67,7 @@ def get_video_qualities_api(url):
                 # Filter for MP4 video formats
                 best_qualities = {}
                 for fmt in formats:
-                    if fmt.get("vcodec") != "none" and fmt.get("ext") in ["mp4", "webm"]:
+                    if fmt.get("vcodec") != "none" and fmt.get("ext") == "mp4":
                         resolution = f"{fmt.get('height', 'Unknown')}p"
                         if resolution not in best_qualities or fmt.get("tbr", 0) > best_qualities[resolution]["tbr"]:
                             best_qualities[resolution] = {
