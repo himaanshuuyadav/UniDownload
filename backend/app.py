@@ -8,9 +8,7 @@ from youtube_downloader import get_video_qualities_api, download_youtube_video, 
 app = Flask(__name__, static_folder="../frontend", static_url_path="/")
 CORS(app)
 
-# Create a directory for cookies
-COOKIE_DIR = "/tmp/cookies"
-os.makedirs(COOKIE_DIR, exist_ok=True)
+COOKIE_DIR = os.path.join(os.path.dirname(__file__), "cookies")
 COOKIE_FILE = os.path.join(COOKIE_DIR, "youtube.cookies")
 
 # Safe download folder for Render
@@ -27,7 +25,7 @@ def init_cookie_file():
             f.write(".youtube.com\tTRUE\t/\tFALSE\t2147483647\tCONSENT\tYES+cb\n")
 
 # Call this at the start of your application
-init_cookie_file()
+# init_cookie_file()
 
 # Proxy-aware yt-dlp config
 def get_ydl_opts(format_id=None):
