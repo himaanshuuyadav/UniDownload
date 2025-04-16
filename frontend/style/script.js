@@ -122,9 +122,22 @@ function fetchQualities() {
             qualitiesDiv.style.display = "grid";
         }
     })
-    .catch(error => {
-    console.error("Error fetching qualities:", error);
-    showMessage("Error fetching video info. Please try again.", true);
+    // Update in script.js fetch error handling
+.catch(error => {
+    console.error("Error details:", error);
+    loadingContainer.style.display = "none";
+    
+    // More specific error message
+    let errorMsg = "Error fetching video info. ";
+    if (error.message.includes("private") || error.message.includes("not available")) {
+        errorMsg += "This video might be private or region-restricted.";
+    } else if (error.message.includes("copyright")) {
+        errorMsg += "This video has copyright restrictions.";
+    } else {
+        errorMsg += "Please try again or try another video.";
+    }
+    
+    showMessage(errorMsg, true);
 });
 }
 
