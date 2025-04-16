@@ -15,7 +15,7 @@ def serve_static_files(path):
     return send_from_directory(app.static_folder, path)
 
 # CORS setup
-CORS(app, resources={r"/*": {"origins": ["https://unidownload.onrender.com"]}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Safe download folder for Render
 DOWNLOAD_FOLDER = "/tmp"
@@ -30,68 +30,43 @@ PROXIES = [
 ]
 
 # Proxy-aware yt-dlp config
+# Updated proxy handling
 def get_ydl_opts(format_id=None):
-    for attempt, proxy in enumerate(PROXIES, start=1):
-        print(f"🔁 Trying proxy {attempt}/{len(PROXIES)}: {proxy}")
-        opts = {
-            'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
-            'merge_output_format': 'mp4',
-            'quiet': False,
-            'verbose': True,
-            'proxy': proxy,
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-            },
-            'extractor_args': {
-                'youtube': ['player_client=web']
-            },
-            'retries': 3,
-            'fragment_retries': 2,
-            'file_access_retries': 2,
-            'concurrent_fragment_downloads': 1
-        }
+    # Try direct connection first without proxy
+    opts = {
+        'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
+        'merge_output_format': 'mp4',
+        'quiet': False,
+        'verbose': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+        },
+        'extractor_args': {
+            'youtube': ['player_client=web']
+        },
+        'retries': 5,  # Increased retries
+        'fragment_retries': 3,
+        'file_access_retries': 3,
+        'socket_timeout': 30,  # Added timeout
+        'concurrent_fragment_downloads': 1
+    }
 
-        try:
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                # Dry run with public test video
-                ydl.extract_info("https://www.youtube.com/watch?v=BaW_jenozKc", download=False)
-            print("✅ Proxy works:", proxy)
-            break  # Use this proxy
-        except Exception as e:
-            print(f"❌ Proxy failed: {proxy} — {e}")
-            continue
-    else:
-        print("🛑 All proxies failed. Using no proxy (direct mode).")
-        opts = {
-            'outtmpl': os.path.join(DOWNLOAD_FOLDER, f'%(title)s_%(id)s.%(ext)s'),
-            'merge_output_format': 'mp4',
-            'quiet': False,
-            'verbose': True,
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-            },
-            'extractor_args': {
-                'youtube': ['player_client=web']
-            },
-            'retries': 3,
-            'fragment_retries': 2,
-            'file_access_retries': 2,
-            'concurrent_fragment_downloads': 1
-        }
-
+    # Add format if provided
     if format_id:
         opts['format'] = f"{format_id}+bestaudio[ext=m4a]"
+    
     return opts
 
 # Fetch qualities
 @app.route("/get_qualities", methods=["POST"])
 def get_qualities():
-    print("Starting get_qualities() call for URL:", video_url)
-
     data = request.get_json()
     video_url = data.get("url")
+    
     if not video_url:
         return jsonify({"error": "No URL provided"}), 400
+    
+    print("Starting get_qualities() call for URL:", video_url)
 
     try:
         with yt_dlp.YoutubeDL(get_ydl_opts()) as ydl:
