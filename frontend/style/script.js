@@ -149,8 +149,8 @@ function downloadVideo() {
     let downloadBtn = document.getElementById("download-btn");
     let qualitiesDiv = document.getElementById("qualities"); // Add this line
 
-    if (!videoUrl || !selectedFormatId) {
-        showMessage("Please fetch qualities first and select one.", true);
+    if (!videoUrl || !selectedFormatId || selectedFormatId === "Select Quality") {
+        showMessage("Please select a quality before downloading!", true);
         return;
     }
 
@@ -160,6 +160,11 @@ function downloadVideo() {
     
     loadingContainer.style.display = "block";
     loadingContainer.querySelector('.loading-text').textContent = "Starting download...";
+    
+    console.log("Sending:", {
+      url: videoUrl,
+      format_id: selectedFormatId
+    });
 
     fetch(`${API_BASE_URL}/download`, {
         method: "POST",
