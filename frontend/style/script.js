@@ -1,6 +1,6 @@
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000'
-    : 'https://unidownload-production.up.railway.app/';
+    : 'https://unidownload-production.up.railway.app';
 // Event Listeners
 document.getElementById("fetch-qualities").addEventListener("click", fetchQualities);
 document.getElementById("download-btn").addEventListener("click", downloadVideo);
