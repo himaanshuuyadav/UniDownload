@@ -42,8 +42,10 @@ def get_video_qualities_api(url):
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
                 'Accept-Language': 'en-US,en;q=0.9',
-                'Referer': 'https://www.youtube.com/'
+                'Referer': 'https://www.youtube.com/',
+                'Cookie': 'SID=g.a000vQjmU-7RWONRMFY_Yax7MmkSteBz5FooSEsZ8JQbAhY3ZFMccPmGHTXVSZQ6EC_xby-nlwACgYKAWUSARMSFQHGX2Mi-m7fwxmvfp7abpAPUXJDJRoVAUF8yKo4GTIvZ64D4QEPAps0eVNs0076; SAPISID=ufEADAPBA9UdNGl-/Af_0mS7cuNECo8eOk'
             }
+
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
