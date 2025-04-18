@@ -88,6 +88,9 @@ def get_video_qualities_api(url):
 def download_youtube_video(url, format_id, output_folder="downloads"):
     os.makedirs(output_folder, exist_ok=True)
 
+    print("Downloading video:", url)
+    print("Using format_id:", format_id)
+
     ydl_opts = {
         'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
         'format': format_id,
@@ -99,4 +102,6 @@ def download_youtube_video(url, format_id, output_folder="downloads"):
             ydl.download([url])
         return {'status': 'success'}
     except Exception as e:
-        return {'error': str(e)}
+        print("Download error details:", e)
+        return {'error': f'Download failed: {str(e)}'}
+
