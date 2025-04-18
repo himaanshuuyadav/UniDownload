@@ -90,7 +90,7 @@ def download_youtube_video(url, format_id, output_folder="downloads"):
 
     ydl_opts = {
         'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
-        'format': f"{format_id}+bestaudio",
+        'format': format_id",
         'merge_output_format': 'mp4'
     }
 
