@@ -3,7 +3,8 @@ from flask_cors import CORS
 from youtube_downloader import get_video_qualities_api, download_youtube_video
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://unidownload.vercel.app"])
+
 
 @app.route('/')
 def home():
