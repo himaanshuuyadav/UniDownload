@@ -1,14 +1,20 @@
 const BASE_URL = "https://unidownload.up.railway.app";
 
-document.getElementById("fetchBtn").addEventListener("click", fetchQualities);
+document.getElementById("fetch-qualities").addEventListener("click", fetchQualities);
 
 async function fetchQualities() {
-  const url = document.getElementById("urlInput").value.trim();
-  const qualitySelect = document.getElementById("qualitySelect");
-  const downloadBtn = document.getElementById("downloadBtn");
+  const url = document.getElementById("video-url").value.trim();
+  const qualityContainer = document.getElementById("quality-options");
+  const selectedQuality = document.getElementById("selected-quality");
+  const downloadBtn = document.getElementById("download-btn");
+  const videoInfo = document.getElementById("video-info");
+  const loadingContainer = document.querySelector(".loading-container");
 
-  qualitySelect.innerHTML = "";
-  downloadBtn.disabled = true;
+  qualityContainer.innerHTML = "";
+  selectedQuality.textContent = "Select Quality";
+  downloadBtn.style.display = "none";
+  videoInfo.style.display = "none";
+  loadingContainer.style.display = "block";
 
   try {
     const res = await fetch(`${BASE_URL}/get_qualities`, {
@@ -17,33 +23,46 @@ async function fetchQualities() {
       body: JSON.stringify({ url }),
     });
 
+    loadingContainer.style.display = "none";
+
     if (!res.ok) throw new Error(`Server responded with status ${res.status}: ${await res.text()}`);
 
     const data = await res.json();
     const qualities = data.qualities;
     const video = data.video_info;
 
-    document.getElementById("title").textContent = video.title;
-    document.getElementById("thumbnail").src = video.thumbnail;
+    document.getElementById("video-title").textContent = video.title;
+    document.getElementById("video-thumbnail").src = video.thumbnail;
+    videoInfo.style.display = "block";
 
     qualities.forEach(q => {
-      const opt = document.createElement("option");
-      opt.value = q.format_id;
-      opt.textContent = `${q.resolution} (${Math.round(q.tbr)} kbps)`;
-      qualitySelect.appendChild(opt);
+      const item = document.createElement("div");
+      item.className = "select-item";
+      item.textContent = `${q.resolution} (${Math.round(q.tbr)} kbps)`;
+      item.dataset.formatId = q.format_id;
+      item.addEventListener("click", () => {
+        selectedQuality.textContent = item.textContent;
+        selectedQuality.dataset.formatId = q.format_id;
+        qualityContainer.style.display = "none";
+        downloadBtn.style.display = "inline-block";
+      });
+      qualityContainer.appendChild(item);
     });
 
-    downloadBtn.disabled = false;
+    selectedQuality.addEventListener("click", () => {
+      qualityContainer.style.display = qualityContainer.style.display === "block" ? "none" : "block";
+    });
 
   } catch (err) {
+    loadingContainer.style.display = "none";
     console.error("Error details:", err);
     alert("Failed to fetch video qualities. Check the URL or try again later.");
   }
 }
 
-document.getElementById("downloadBtn").addEventListener("click", async () => {
-  const url = document.getElementById("urlInput").value.trim();
-  const format_id = document.getElementById("qualitySelect").value;
+document.getElementById("download-btn").addEventListener("click", async () => {
+  const url = document.getElementById("video-url").value.trim();
+  const format_id = document.getElementById("selected-quality").dataset.formatId;
 
   try {
     const res = await fetch(`${BASE_URL}/download`, {
