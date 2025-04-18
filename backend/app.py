@@ -1,71 +1,37 @@
-const BASE_URL = "https://unidownload.up.railway.app";
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from youtube_downloader import get_video_qualities_api, download_youtube_video
 
-document.getElementById("fetchBtn").addEventListener("click", fetchQualities);
+app = Flask(__name__)
+CORS(app)
 
-async function fetchQualities() {
-  const url = document.getElementById("urlInput").value.trim();
-  const qualitySelect = document.getElementById("qualitySelect");
-  const downloadBtn = document.getElementById("downloadBtn");
+@app.route('/')
+def home():
+    return "UniDownload Backend Running"
 
-  qualitySelect.innerHTML = "";
-  downloadBtn.disabled = true;
+@app.route('/get_qualities', methods=['POST'])
+def get_qualities():
+    data = request.get_json()
+    url = data.get('url')
 
-  try {
-    const res = await fetch(`${BASE_URL}/get_qualities`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url }),
-    });
+    if not url:
+        return jsonify({'error': 'No URL provided'}), 400
 
-    if (!res.ok) throw new Error(`Server responded with status ${res.status}: ${await res.text()}`);
+    result = get_video_qualities_api(url)
+    if 'error' in result:
+        return jsonify(result), 400
+    return jsonify(result)
 
-    const data = await res.json();
-    const qualities = data.qualities;
-    const video = data.video_info;
+@app.route('/download', methods=['POST'])
+def download():
+    data = request.get_json()
+    url = data.get('url')
+    format_id = data.get('format_id')
 
-    document.getElementById("title").textContent = video.title;
-    document.getElementById("thumbnail").src = video.thumbnail;
+    if not url or not format_id:
+        return jsonify({'error': 'Missing URL or format ID'}), 400
 
-    qualities.forEach(q => {
-      const opt = document.createElement("option");
-      opt.value = q.format_id;
-      opt.textContent = `${q.resolution} (${Math.round(q.tbr)} kbps)`;
-      qualitySelect.appendChild(opt);
-    });
-
-    downloadBtn.disabled = false;
-
-  } catch (err) {
-    console.error("Error details:", err);
-    alert("Failed to fetch video qualities. Check the URL or try again later.");
-  }
-}
-
-document.getElementById("downloadBtn").addEventListener("click", async () => {
-  const url = document.getElementById("urlInput").value.trim();
-  const format_id = document.getElementById("qualitySelect").value;
-
-  try {
-    const res = await fetch(`${BASE_URL}/download`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, format_id }),
-    });
-
-    if (!res.ok) throw new Error(`Download error: ${res.status}`);
-
-    const data = await res.json();
-    const downloadUrl = data.download_url;
-
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = "";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-  } catch (err) {
-    console.error("Download error:", err);
-    alert("Failed to start download. Please try again.");
-  }
-});
+    result = download_youtube_video(url, format_id)
+    if 'error' in result:
+        return jsonify(result), 400
+    return jsonify(result)
