@@ -24,8 +24,14 @@ def get_video_qualities_api(url):
         stream_url = f"{PIPED_API_BASE}/streams/{video_id}"
         metadata_url = f"{PIPED_API_BASE}/metadata/{video_id}"
 
-        streams_res = requests.get(stream_url)
-        meta_res = requests.get(metadata_url)
+        try:
+            timeout = 10
+            streams_res = requests.get(stream_url, timeout=timeout)
+            meta_res = requests.get(metadata_url, timeout=timeout)
+        except requests.exceptions.Timeout:
+            return {"error": "Upstream Piped API timed out"}
+
+
 
         if not streams_res.ok or not meta_res.ok:
             return {"error": "Failed to fetch video data"}
