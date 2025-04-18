@@ -1,14 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, render_template
+import os
 from flask_cors import CORS
-from youtube_downloader import get_video_qualities_api, download_youtube_video
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://unidownload.vercel.app"]}})
-
+app = Flask(__name__, static_folder="../frontend", static_url_path="")
+CORS(app)
 
 @app.route('/')
-def home():
-    return "UniDownload Backend Running"
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/style/<path:path>')
+def send_style(path):
+    return send_from_directory(os.path.join(app.static_folder, 'style'), path)
 
 @app.route('/get_qualities', methods=['POST'])
 def get_qualities():
