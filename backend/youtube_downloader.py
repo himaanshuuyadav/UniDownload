@@ -2,7 +2,8 @@
 import requests
 import re
 
-PIPED_API_BASE = "https://pipedapi.kavin.rocks"
+PIPED_API_BASE = "https://pipedapi.projectsegfau.lt"
+
 
 
 def extract_video_id(url):
