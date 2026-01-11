@@ -63,8 +63,13 @@ class YouTubeDownloader:
             'no_warnings': True,
             # Anti-bot detection options
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
             'nocheckcertificate': True,
+            # Additional bypass options
+            'http_headers': {
+                'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 12; en_US)',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
         }
         
         # Use cookies if available
@@ -190,8 +195,13 @@ class YouTubeDownloader:
             'progress_hooks': [self._download_progress_hook],
             # Anti-bot detection
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
             'nocheckcertificate': True,
+            # Additional bypass options
+            'http_headers': {
+                'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 12; en_US)',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
         }
         
         # Use cookies if available
@@ -257,8 +267,13 @@ class YouTubeDownloader:
             'ignoreerrors': True,  # Continue on errors
             # Anti-bot detection
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
             'nocheckcertificate': True,
+            # Additional bypass options
+            'http_headers': {
+                'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 12; en_US)',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
         }
         
         # Use cookies if available
@@ -380,8 +395,13 @@ class YouTubeDownloader:
             'progress_hooks': [self._download_progress_hook],
             # Anti-bot detection
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
             'nocheckcertificate': True,
+            # Additional bypass options
+            'http_headers': {
+                'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 12; en_US)',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
         }
         
         # Use cookies if available
@@ -552,8 +572,13 @@ class YouTubeDownloader:
             'ignoreerrors': True,
             # Anti-bot detection
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
             'nocheckcertificate': True,
+            # Additional bypass options
+            'http_headers': {
+                'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 12; en_US)',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
         }
         
         # Use cookies if available
