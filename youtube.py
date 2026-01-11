@@ -61,9 +61,11 @@ class YouTubeDownloader:
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
+            'skip_download': True,
+            'no_check_formats': True,
             # Anti-bot detection options
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'extractor_args': {'youtube': {'player_client': ['android', 'web'], 'player_skip': ['webpage', 'configs']}},
+            'extractor_args': {'youtube': {'player_client': ['android'], 'player_skip': ['webpage']}},
             'nocheckcertificate': True,
             # Additional bypass options
             'http_headers': {

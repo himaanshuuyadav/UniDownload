@@ -186,7 +186,7 @@ async function handleDownload(platform, option, formatId = null) {
 
     // Add to downloads list
     const downloadId = Date.now();
-    addDownloadItem(downloadId, option, 'Initializing...');
+    addDownloadItem(downloadId, option, 'Downloading...');
 
     try {
         const response = await fetch(`${API_BASE}/download`, {
@@ -203,7 +203,7 @@ async function handleDownload(platform, option, formatId = null) {
             throw new Error(data.error || 'Download failed');
         }
 
-        updateDownloadItem(downloadId, 'success', data.message);
+        updateDownloadItem(downloadId, 'success', data.message, data.files);
         showStatus(data.message, 'success');
 
     } catch (error) {
@@ -231,7 +231,7 @@ function addDownloadItem(id, option, message) {
 }
 
 // Update Download Item
-function updateDownloadItem(id, status, message) {
+function updateDownloadItem(id, status, message, files = []) {
     const item = document.getElementById(`download-${id}`);
     if (!item) return;
 
@@ -241,6 +241,28 @@ function updateDownloadItem(id, status, message) {
     if (status === 'success') {
         statusIcon.textContent = '✅';
         messageEl.textContent = message;
+        
+        // Add download links if files are available
+        if (files && files.length > 0) {
+            const linksContainer = document.createElement('div');
+            linksContainer.style.marginTop = '8px';
+            
+            files.forEach(file => {
+                const link = document.createElement('a');
+                link.href = file.url;
+                link.textContent = `📥 Download ${file.filename}`;
+                link.className = 'download-link';
+                link.style.display = 'block';
+                link.style.color = '#4ade80';
+                link.style.textDecoration = 'none';
+                link.style.marginTop = '4px';
+                link.style.fontSize = '0.9em';
+                link.download = file.filename;
+                linksContainer.appendChild(link);
+            });
+            
+            item.querySelector('.details').appendChild(linksContainer);
+        }
     } else if (status === 'error') {
         statusIcon.textContent = '❌';
         messageEl.textContent = message;

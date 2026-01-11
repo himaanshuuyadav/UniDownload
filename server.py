@@ -3,10 +3,13 @@ Flask API Server for UniDownload
 Provides REST API endpoints for downloading media from various platforms
 """
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import os
 import re
+import glob
+import json
+from datetime import datetime
 from youtube import YouTubeDownloader
 from instagram import InstagramDownloader
 from facebook import FacebookDownloader
@@ -144,45 +147,74 @@ def download():
         if not url or not platform:
             return jsonify({'error': 'URL and platform are required'}), 400
         
+        # Get list of files before download
+        before_files = set()
+        for root, dirs, files in os.walk('downloads'):
+            for file in files:
+                before_files.add(os.path.join(root, file))
+        
         # Process download based on platform and option
         if platform == 'youtube':
             if option == 'audio':
                 youtube_dl.download_audio(url)
-                message = 'Audio download started'
+                message = 'Audio downloaded successfully'
             elif option == 'subtitles':
                 youtube_dl.download_subtitles_only(url)
-                message = 'Subtitles download started'
+                message = 'Subtitles downloaded successfully'
             elif option == 'thumbnail':
                 youtube_dl.download_thumbnail(url)
-                message = 'Thumbnail download started'
+                message = 'Thumbnail downloaded successfully'
             elif option == 'playlist':
                 youtube_dl.download_playlist(url)
-                message = 'Playlist download started'
+                message = 'Playlist downloaded successfully'
             else:  # video
                 if format_id:
                     # format_id is actually the quality height
                     youtube_dl.download_video(url, quality_height=int(format_id))
                 else:
                     youtube_dl.download_video(url)
-                message = 'Video download started'
+                message = 'Video downloaded successfully'
         
         elif platform == 'instagram':
             if option == 'audio':
                 instagram_dl.download_audio(url)
-                message = 'Audio download started'
+                message = 'Audio downloaded successfully'
             else:  # post
                 instagram_dl.download_post(url)
-                message = 'Post download started'
+                message = 'Post downloaded successfully'
         
         elif platform == 'facebook':
             if option == 'audio':
                 facebook_dl.download_audio(url)
-                message = 'Audio download started'
+                message = 'Audio downloaded successfully'
             else:  # post
                 facebook_dl.download_post(url)
-                message = 'Post download started'
+                message = 'Post downloaded successfully'
         
-        return jsonify({'success': True, 'message': message})
+        # Get list of files after download
+        after_files = set()
+        for root, dirs, files in os.walk('downloads'):
+            for file in files:
+                after_files.add(os.path.join(root, file))
+        
+        # Find newly downloaded files
+        new_files = after_files - before_files
+        download_urls = []
+        
+        for file_path in new_files:
+            # Convert to web-accessible path
+            web_path = file_path.replace('\\', '/').replace('downloads/', '/api/files/')
+            filename = os.path.basename(file_path)
+            download_urls.append({
+                'filename': filename,
+                'url': web_path
+            })
+        
+        return jsonify({
+            'success': True, 
+            'message': message,
+            'files': download_urls
+        })
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -192,6 +224,16 @@ def download():
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'message': 'UniDownload API is running'})
+
+
+@app.route('/api/files/<path:subpath>/<filename>')
+def serve_file(subpath, filename):
+    """Serve downloaded files"""
+    try:
+        directory = os.path.join('downloads', subpath)
+        return send_from_directory(directory, filename, as_attachment=True)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 404
 
 
 @app.route('/')
