@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniDownload - Universal Media Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 UniDownload</h1>
+            <p class="subtitle">Universal Media Downloader</p>
+        </header>
+
+        <main>
+            <!-- URL Input Section -->
+            <div class="input-section">
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    placeholder="Paste any YouTube, Instagram, or Facebook URL here..."
+                    autocomplete="off"
+                />
+                <button id="detectBtn" class="btn-primary">
+                    <span class="btn-text">Detect & Analyze</span>
+                    <span class="loader"></span>
+                </button>
+            </div>
+
+            <!-- Status Messages -->
+            <div id="statusMessage" class="status-message hidden"></div>
+
+            <!-- Media Info Section -->
+            <div id="mediaInfo" class="media-info hidden">
+                <div class="info-header">
+                    <img id="thumbnail" src="" alt="Thumbnail" class="thumbnail">
+                    <div class="info-details">
+                        <span id="platformBadge" class="platform-badge"></span>
+                        <h2 id="title"></h2>
+                        <p id="uploader"></p>
+                        <p id="duration"></p>
+                    </div>
+                </div>
+
+                <!-- YouTube Options -->
+                <div id="youtubeOptions" class="options-section hidden">
+                    <h3>📥 Download Options</h3>
+                    
+                    <!-- Video Quality Options -->
+                    <div class="option-group">
+                        <h4>Video Quality</h4>
+                        <div id="formatsList" class="formats-list"></div>
+                    </div>
+
+                    <!-- Additional Options -->
+                    <div class="option-group">
+                        <h4>Other Options</h4>
+                        <button class="option-btn" data-option="audio">
+                            🎵 Audio Only (MP3)
+                        </button>
+                        <button class="option-btn" data-option="subtitles" id="subtitlesBtn">
+                            📝 Subtitles Only
+                        </button>
+                        <button class="option-btn" data-option="thumbnail">
+                            🖼️ Thumbnail Only
+                        </button>
+                        <button class="option-btn" data-option="playlist" id="playlistBtn">
+                            📑 Download Playlist
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instagram Options -->
+                <div id="instagramOptions" class="options-section hidden">
+                    <h3>📥 Download Options</h3>
+                    <div class="option-group">
+                        <button class="option-btn" data-option="post">
+                            📸 Download Post/Reel/Story
+                        </button>
+                        <button class="option-btn" data-option="audio">
+                            🎵 Audio Only (MP3)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Facebook Options -->
+                <div id="facebookOptions" class="options-section hidden">
+                    <h3>📥 Download Options</h3>
+                    <div class="option-group">
+                        <button class="option-btn" data-option="post">
+                            📱 Download Post/Video/Image
+                        </button>
+                        <button class="option-btn" data-option="audio">
+                            🎵 Audio Only (MP3)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Downloads Progress -->
+            <div id="downloadProgress" class="download-progress hidden">
+                <h3>⏬ Downloads</h3>
+                <div id="downloadsList"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Supports YouTube, Instagram & Facebook</p>
+            <p class="note">⚠️ Downloads are saved to the <code>downloads/</code> folder</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
