@@ -61,7 +61,15 @@ class YouTubeDownloader:
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
+            # Anti-bot detection options
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'nocheckcertificate': True,
         }
+        
+        # Use cookies if available
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookiefile'] = 'cookies.txt'
         
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -180,7 +188,15 @@ class YouTubeDownloader:
             'outtmpl': output_template,
             'merge_output_format': output_format,
             'progress_hooks': [self._download_progress_hook],
+            # Anti-bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'nocheckcertificate': True,
         }
+        
+        # Use cookies if available
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookiefile'] = 'cookies.txt'
         
         # Add subtitle options
         if download_subs:
@@ -239,7 +255,15 @@ class YouTubeDownloader:
             'merge_output_format': output_format,
             'progress_hooks': [self._download_progress_hook],
             'ignoreerrors': True,  # Continue on errors
+            # Anti-bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'nocheckcertificate': True,
         }
+        
+        # Use cookies if available
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookiefile'] = 'cookies.txt'
         
         if download_subs:
             ydl_opts['writesubtitles'] = True
@@ -354,7 +378,15 @@ class YouTubeDownloader:
                 'preferredquality': '192',
             }],
             'progress_hooks': [self._download_progress_hook],
+            # Anti-bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'nocheckcertificate': True,
         }
+        
+        # Use cookies if available
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookiefile'] = 'cookies.txt'
         
         try:
             print(f"\nDownloading audio...")
@@ -518,7 +550,15 @@ class YouTubeDownloader:
             }],
             'progress_hooks': [self._download_progress_hook],
             'ignoreerrors': True,
+            # Anti-bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'nocheckcertificate': True,
         }
+        
+        # Use cookies if available
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookiefile'] = 'cookies.txt'
         
         try:
             print(f"\nDownloading playlist as audio...")
