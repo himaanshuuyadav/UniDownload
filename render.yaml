@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: unidownload
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    nativeEnvironment:
+      - ffmpeg
