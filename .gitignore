@@ -1,0 +1,40 @@
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+venv/
+.env
+.venv/
+
+# ── Flask ───────────────────────────────────────────────
+instance/
+*.db
+
+# ── Downloads (user data, not source) ───────────────────
+backend/downloads/
+backend/debug/
+*.log
+
+# ── Operating system ────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ── IDE ─────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── Extension build artifacts ───────────────────────────
+*.zip
+*.crx

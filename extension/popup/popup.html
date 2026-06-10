@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniDownload</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">UniDownload</h1>
+    </div>
+
+    <!-- info row -->
+    <div class="info">
+      <div class="info-row">
+        <span class="label">Current URL:</span>
+        <span id="currentUrl" class="value url-value">-</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Status:</span>
+        <span id="statusText" class="value">Waiting</span>
+      </div>
+    </div>
+
+    <!-- result panel (hidden until analyze returns) -->
+    <div id="resultPanel" class="result hidden">
+      <div class="info">
+        <div class="info-row">
+          <span class="label">Platform:</span>
+          <span id="platformName" class="value">-</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Content Type:</span>
+          <span id="postType" class="value">-</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Media Count:</span>
+          <span id="mediaCount" class="value">0</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="btnDownloadCurrent" class="btn btn-primary" disabled>
+          Download Current
+        </button>
+        <button id="btnDownloadAll" class="btn btn-secondary" disabled>
+          Download All
+        </button>
+      </div>
+    </div>
+
+    <!-- primary action -->
+    <button id="btnAnalyze" class="btn btn-analyze">Analyze</button>
+
+    <!-- messages -->
+    <div id="message" class="message hidden"></div>
+
+    <!-- debug panel -->
+    <div id="debug" class="debug hidden">
+      <div class="debug-toggle" id="debugToggle">Debug Info ▸</div>
+      <div id="debugBody" class="debug-body hidden">
+        <div class="debug-row">
+          <span class="debug-label">Backend URL:</span>
+          <span class="debug-value">http://127.0.0.1:5000</span>
+        </div>
+        <div class="debug-row">
+          <span class="debug-label">Backend Status:</span>
+          <span id="debugBackend" class="debug-value">-</span>
+        </div>
+        <div class="debug-row">
+          <span class="debug-label">yt-dlp Status:</span>
+          <span id="debugYtdl" class="debug-value">-</span>
+        </div>
+        <div class="debug-row">
+          <span class="debug-label">Extracted URLs:</span>
+          <span id="debugUrlCount" class="debug-value">0</span>
+        </div>
+        <div id="debugUrlList" class="debug-url-list hidden"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="version">v4.0.0</span>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
